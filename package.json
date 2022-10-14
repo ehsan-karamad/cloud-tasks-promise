@@ -1,0 +1,29 @@
+{
+  "name": "cloud-tasks-promise",
+  "version": "1.0.0",
+  "description": "AsyncCall based on Cloud Tasks",
+  "main": "async-call.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ehsan-karamad/cloud-tasks-promise.git"
+  },
+  "keywords": [
+    "Cloud",
+    "Tasks",
+    "TaskQueue",
+    "Promise",
+    "GCP"
+  ],
+  "author": "Ehsan Karamad",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ehsan-karamad/cloud-tasks-promise/issues"
+  },
+  "homepage": "https://github.com/ehsan-karamad/cloud-tasks-promise#readme",
+  "dependencies": {
+    "@google-cloud/tasks": "^3.0.2"
+  }
+}
