@@ -4,7 +4,7 @@
   "description": "AsyncCall based on Cloud Tasks",
   "main": "async-call.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -25,5 +25,9 @@
   "homepage": "https://github.com/ehsan-karamad/cloud-tasks-promise#readme",
   "dependencies": {
     "@google-cloud/tasks": "^3.0.2"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "mocha": "^10.1.0"
   }
 }
