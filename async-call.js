@@ -20,8 +20,18 @@ function replaceQueueId(taskName, queueId) {
     return parts.join('/');
 }
 
+/**
+ * Respond through a task queue.
+ *
+ * Stores the payload as the contents of a Cloud Tasks task which is destined to endpoint "url".
+ * @param {*} url Address of the endpoint (Receiver).
+ * @param {*} payload Response payload, stored as the body component of a POST request.
+ * @param {*} incomingRequest The orignal incoming request from the endpoint. It is used to deduce the original task name.
+ * @param {*} respQueueId The queue used for sending the response.
+ * @return {*} The created task in the response queue. 
+ */
 exports.respond = (url, payload, incomingRequest, respQueueId) => {
-    const reqTaskName = incomingRequest.headers[CLOUD_TASKS_HEADER_TASK_NAME];
+    const reqTaskName = incomingRequest.headers[CLOUD_TASKS_HEADER_TASK_NAME] || randomUUID();
     const taskName = replaceQueueId(reqTaskName, respQueueId);
     return client.createTask({
         parent: client.queuePath(PROJECT, LOCATION, respQueueId),
@@ -38,11 +48,18 @@ exports.respond = (url, payload, incomingRequest, respQueueId) => {
     });
 };
 
-exports.call = (url,
-    payload,
-    outboundQueue,
-    inboundQueue,
-    oidcToken) => {
+
+/**
+ * Performs an Asynchronous HTTP call through a message queue and waits for response.
+ *
+ * @param {*} url Target URL for the message destination.
+ * @param {*} payload Paload, passed as a POST requests body.
+ * @param {*} outboundQueue The task queue name used for the request.
+ * @param {*} inboundQueue The task queue name used for the repsonse.
+ * @param {*} oidcToken Optionally provided for authenticated endpoints.
+ * @return {*} The response from the endpoint as an HTTP request (i.e., an object with body, header, and url).
+ */
+exports.call = (url, payload, outboundQueue, inboundQueue, oidcToken) => {
     return new Promise((resolve) => {
         client.createTask({
             parent: client.queuePath(PROJECT, LOCATION, outboundQueue),
