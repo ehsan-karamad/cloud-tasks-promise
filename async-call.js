@@ -1,10 +1,13 @@
 const { CloudTasksClient } = require('@google-cloud/tasks');
 const { randomUUID } = require('crypto');
+const { resolve } = require('path');
 
 const CLOUD_TASKS_HEADER_TASK_NAME = 'X-CloudTasks-TaskName';
 let client = new CloudTasksClient();
 let PROJECT = 'ekaramad-playground';
 let LOCATION = 'us-central1';
+let REQUEST_QUEUE = 'default';
+let RESPONSE_QUEUE = 'response-default';
 let POLLING_INTERVAL = 2000;
 
 exports.init = (config) => {
@@ -59,19 +62,18 @@ exports.respond = (url, payload, incomingRequest, respQueueId) => {
  * @param {*} oidcToken Optionally provided for authenticated endpoints.
  * @return {*} The response from the endpoint as an HTTP request (i.e., an object with body, header, and url).
  */
-exports.call = (url, payload, outboundQueue, inboundQueue, oidcToken) => {
+exports.call = (url, payload) => {
     return new Promise((resolve) => {
         client.createTask({
-            parent: client.queuePath(PROJECT, LOCATION, outboundQueue),
+            parent: client.queuePath(PROJECT, LOCATION, REQUEST_QUEUE),
             task: {
                 httpRequest: {
                     url: url,
                     body: Buffer.from(JSON.stringify(payload)).toString('base64'),
-                    oidcToken: oidcToken
                 }
             }
         }).then(createdTask => {
-            const taskName = replaceQueueId(createdTask[0].name, inboundQueue);
+            const taskName = replaceQueueId(createdTask[0].name, RESPONSE_QUEUE);
             const interval = setInterval(async () => {
                 try {
                     const response = await client.getTask({ name: taskName });
@@ -86,3 +88,13 @@ exports.call = (url, payload, outboundQueue, inboundQueue, oidcToken) => {
         });
     });
 };
+
+let durableCallId = 1;
+exports.durableCall = (url, payload, req) => {
+    const callId = durableCallId++;
+    const context = req.body._context || {};
+    if (context.durableCallId) {
+        return Promise.resolve(context);
+    };
+    return exports.call(url, payload);
+}

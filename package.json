@@ -4,7 +4,8 @@
   "description": "AsyncCall based on Cloud Tasks",
   "main": "async-call.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "start-main": "npx functions-framework --target=mainFunc"
   },
   "repository": {
     "type": "git",
@@ -24,7 +25,8 @@
   },
   "homepage": "https://github.com/ehsan-karamad/cloud-tasks-promise#readme",
   "dependencies": {
-    "@google-cloud/tasks": "^3.0.2"
+    "@google-cloud/tasks": "^3.0.2",
+    "cloud-tasks-promise": "github:ehsan-karamad/cloud-tasks-promise"
   },
   "devDependencies": {
     "chai": "^4.3.6",
