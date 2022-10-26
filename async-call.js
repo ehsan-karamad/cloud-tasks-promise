@@ -1,4 +1,5 @@
 const { CloudTasksClient } = require('@google-cloud/tasks');
+const { v4 } = require('uuid');
 
 const CLOUD_TASKS_HEADER_TASK_NAME = 'X-CloudTasks-TaskName';
 let client = new CloudTasksClient();
@@ -65,10 +66,13 @@ exports.respond = (url, payload, taskId) => {
  */
 exports.call = (url, payload) => {
     return new Promise((resolve) => {
+        const taskId = v4();
+        payload['taskId'] = taskId;
         client.createTask({
             parent: client.queuePath(PROJECT, LOCATION, REQUEST_QUEUE),
             task: {
                 httpRequest: {
+                    name: client.queuePath(PROJECT, LOCATION, REQUEST_QUEUE, taskId),
                     headers: {
                         'content-type': 'application/json'
                     },
