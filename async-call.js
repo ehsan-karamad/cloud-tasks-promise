@@ -31,8 +31,7 @@ function replaceQueueId(taskName, queueId) {
  * @param {*} respQueueId The queue used for sending the response.
  * @return {*} The created task in the response queue. 
  */
-exports.respond = (url, payload, incomingRequest) => {
-    const taskId = incomingRequest.headers['x-cloudtasks-taskname'];
+exports.respond = (url, payload, taskId) => {
     const taskName = client.taskPath(PROJECT, LOCATION, RESPONSE_QUEUE, taskId);
     console.log(`Responding as ${taskName}`);
     return client.createTask({
