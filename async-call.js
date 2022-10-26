@@ -90,7 +90,7 @@ exports.call = (url, payload) => {
                     resolve(result);
                     return;
                 } catch (e) {
-                    // Ignore errors.
+                    console.log(e);
                     console.log(`Waiting for task: ${taskName}`);
                 }
             }, POLLING_INTERVAL);
