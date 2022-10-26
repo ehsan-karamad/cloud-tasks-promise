@@ -7,7 +7,7 @@ let PROJECT = 'ekaramad-playground';
 let LOCATION = 'us-central1';
 let REQUEST_QUEUE = 'default';
 let RESPONSE_QUEUE = 'response-default';
-let POLLING_INTERVAL = 2000;
+let POLLING_INTERVAL = 5000;
 
 exports.initAsyncCall = (config) => {
     PROJECT = config.projectId || PROJECT;
@@ -90,7 +90,6 @@ exports.call = (url, payload) => {
                     resolve(result);
                     return;
                 } catch (e) {
-                    console.log(e);
                     console.log(`Waiting for task: ${taskName}`);
                 }
             }, POLLING_INTERVAL);
