@@ -10,7 +10,7 @@ let REQUEST_QUEUE = 'default';
 let RESPONSE_QUEUE = 'response-default';
 let POLLING_INTERVAL = 2000;
 
-exports.init = (config) => {
+exports.initAsyncCall = (config) => {
     PROJECT = config.projectId || PROJECT;
     LOCATION = config.locationId || LOCATION;
     POLLING_INTERVAL = config.pollingInterval || pollingInterval;
@@ -33,11 +33,11 @@ function replaceQueueId(taskName, queueId) {
  * @param {*} respQueueId The queue used for sending the response.
  * @return {*} The created task in the response queue. 
  */
-exports.respond = (url, payload, incomingRequest, respQueueId) => {
+exports.respond = (url, payload, incomingRequest) => {
     const reqTaskName = incomingRequest.headers[CLOUD_TASKS_HEADER_TASK_NAME] || randomUUID();
     const taskName = replaceQueueId(reqTaskName, respQueueId);
     return client.createTask({
-        parent: client.queuePath(PROJECT, LOCATION, respQueueId),
+        parent: client.queuePath(PROJECT, LOCATION, RESPONSE_QUEUE),
         task: {
             name: taskName,
             httpRequest: {
