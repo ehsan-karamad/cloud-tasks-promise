@@ -81,7 +81,7 @@ exports.call = (url, payload) => {
                 }
             }
         }).then(createdTask => {
-            const taskName = replaceQueueId(createdTask[0].name, RESPONSE_QUEUE);
+            const taskName = client.taskPath(PROJECT, LOCATION, RESPONSE_QUEUE, taskId);
             const interval = setInterval(async () => {
                 try {
                     const response = await client.getTask({ name: taskName });
