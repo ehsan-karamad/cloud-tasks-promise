@@ -35,7 +35,7 @@ function replaceQueueId(taskName, queueId) {
  */
 exports.respond = (url, payload, incomingRequest) => {
     const reqTaskName = incomingRequest.headers[CLOUD_TASKS_HEADER_TASK_NAME] || randomUUID();
-    const taskName = replaceQueueId(reqTaskName, respQueueId);
+    const taskName = replaceQueueId(reqTaskName, RESPONSE_QUEUE);
     return client.createTask({
         parent: client.queuePath(PROJECT, LOCATION, RESPONSE_QUEUE),
         task: {
