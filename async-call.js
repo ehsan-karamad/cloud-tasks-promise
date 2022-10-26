@@ -1,6 +1,4 @@
 const { CloudTasksClient } = require('@google-cloud/tasks');
-const { randomUUID } = require('crypto');
-const { resolve } = require('path');
 
 const CLOUD_TASKS_HEADER_TASK_NAME = 'X-CloudTasks-TaskName';
 let client = new CloudTasksClient();
@@ -34,11 +32,8 @@ function replaceQueueId(taskName, queueId) {
  * @return {*} The created task in the response queue. 
  */
 exports.respond = (url, payload, incomingRequest) => {
-    const reqTaskName = incomingRequest.headers[CLOUD_TASKS_HEADER_TASK_NAME];
-    if (!reqTaskName) {
-        throw new Error('Task name is missing.');
-    }
-    const taskName = replaceQueueId(reqTaskName, RESPONSE_QUEUE);
+    const taskId = incomingRequest.headers['x-cloudtasks-taskname'];
+    const taskName = client.taskPath(PROJECT, LOCATION, RESPONSE_QUEUE, taskId);
     console.log(`Responding as ${taskName}`);
     return client.createTask({
         parent: client.queuePath(PROJECT, LOCATION, RESPONSE_QUEUE),
