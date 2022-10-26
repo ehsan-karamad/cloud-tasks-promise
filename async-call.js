@@ -16,12 +16,6 @@ exports.initAsyncCall = (config) => {
     client = config.client || client;
 };
 
-function replaceQueueId(taskName, queueId) {
-    const parts = taskName.split('/');
-    parts[5] = queueId;
-    return parts.join('/');
-}
-
 /**
  * Respond through a task queue.
  *
@@ -86,8 +80,8 @@ exports.call = (url, payload) => {
                 try {
                     const response = await client.getTask({ name: taskName });
                     response[0].httpRequest.body = JSON.parse(response[0].httpRequest.body);
-                    resolve(response[0].httpRequest);
                     clearInterval(interval);
+                    resolve(response[0].httpRequest);
                 } catch (e) {
                     // Ignore errors.
                     console.log(`Waiting for task: ${taskName}`);
