@@ -34,8 +34,12 @@ function replaceQueueId(taskName, queueId) {
  * @return {*} The created task in the response queue. 
  */
 exports.respond = (url, payload, incomingRequest) => {
-    const reqTaskName = incomingRequest.headers[CLOUD_TASKS_HEADER_TASK_NAME] || randomUUID();
+    const reqTaskName = incomingRequest.headers[CLOUD_TASKS_HEADER_TASK_NAME];
+    if (!reqTaskName) {
+        throw new Error('Task name is missing.');
+    }
     const taskName = replaceQueueId(reqTaskName, RESPONSE_QUEUE);
+    console.log(`Responding as ${taskName}`);
     return client.createTask({
         parent: client.queuePath(PROJECT, LOCATION, RESPONSE_QUEUE),
         task: {
