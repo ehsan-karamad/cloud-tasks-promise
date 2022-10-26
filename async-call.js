@@ -74,14 +74,21 @@ exports.call = (url, payload) => {
                     body: Buffer.from(JSON.stringify(payload)).toString('base64'),
                 }
             }
-        }).then(createdTask => {
+        }).then(() => {
             const taskName = client.taskPath(PROJECT, LOCATION, RESPONSE_QUEUE, taskId);
             const interval = setInterval(async () => {
                 try {
-                    const response = await client.getTask({ name: taskName });
-                    response[0].httpRequest.body = JSON.parse(response[0].httpRequest.body);
+                    const response = await client.getTask({
+                        name: taskName,
+                        responseView: 'FULL'
+                    });
+                    const result = {
+                        headers: response[0].httpRequest.headers,
+                        body: JSON.parse(response[0].httpRequest.body)
+                    };
                     clearInterval(interval);
-                    resolve(response[0].httpRequest);
+                    resolve(result);
+                    return;
                 } catch (e) {
                     // Ignore errors.
                     console.log(`Waiting for task: ${taskName}`);
