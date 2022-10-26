@@ -40,6 +40,9 @@ exports.respond = (url, payload, incomingRequest) => {
         task: {
             name: taskName,
             httpRequest: {
+                headers: {
+                    'content-type': 'application/json'
+                },
                 url: url,
                 body: Buffer.from(JSON.stringify(payload)).toString('base64')
             },
@@ -67,6 +70,9 @@ exports.call = (url, payload) => {
             parent: client.queuePath(PROJECT, LOCATION, REQUEST_QUEUE),
             task: {
                 httpRequest: {
+                    headers: {
+                        'content-type': 'application/json'
+                    },
                     url: url,
                     body: Buffer.from(JSON.stringify(payload)).toString('base64'),
                 }
